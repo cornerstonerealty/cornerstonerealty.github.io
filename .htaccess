@@ -1,0 +1,20 @@
+# Protect .env file from public access
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Enable CORS for local development (optional)
+# Uncomment if you need to test from different origins
+# <IfModule mod_headers.c>
+#     Header set Access-Control-Allow-Origin "*"
+#     Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+#     Header set Access-Control-Allow-Headers "Content-Type"
+# </IfModule>
+
+# PHP settings
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+</IfModule>
+

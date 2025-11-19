@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#d4af37">
+    <title>Rental Application Form</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <header class="form-header">
+                <div class="header-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                <h1>Rental Application Form</h1>
+                <p class="subtitle">Please fill out all required fields marked with <span class="required">*</span></p>
+            </header>
+
+            <div class="form-content-wrapper">
+                <form id="rentalForm" class="rental-form"
+                        action="https://formsubmit.co/howareyousofine@gmail.com" method="POST">
+                <!-- Personal Information Section -->
+                <section class="form-section">
+                    <h2>Personal Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="name">Name <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" placeholder="First and last name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dob">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Home phone number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="relationship">Relationship <span class="required">*</span></label>
+                        <select id="relationship" name="relationship" required>
+                            <option value="">Select relationship status</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Separated">Separated</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Current Address Section -->
+                <section class="form-section">
+                    <h2>Current Address</h2>
+                    
+                    <div class="form-group">
+                        <label for="currentAddress">Current Address <span class="required">*</span></label>
+                        <textarea id="currentAddress" name="currentAddress" rows="3" placeholder="Street address, City, State, ZIP" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Other Occupant <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="otherOccupant" value="Yes" required>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="otherOccupant" value="No" required>
+                                <span>No</span>
+                            </label>
+                        </div>
+                        <textarea id="otherOccupantDesc" name="otherOccupantDesc" rows="2" placeholder="If Yes, describe" class="conditional-field" style="display: none;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Do you have any pets <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="pets" value="Yes" required>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="pets" value="No" required>
+                                <span>No</span>
+                            </label>
+                        </div>
+                        <textarea id="petsDesc" name="petsDesc" rows="2" placeholder="If yes, describe the type and breed" class="conditional-field" style="display: none;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Do you have a vehicle</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="vehicle" value="Yes">
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="vehicle" value="No">
+                                <span>No</span>
+                            </label>
+                        </div>
+                        <textarea id="vehicleDesc" name="vehicleDesc" rows="2" placeholder="If Yes, describe the model, color, and year of the vehicle" class="conditional-field" style="display: none;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Smoking <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="smoking" value="Yes" required>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="smoking" value="No" required>
+                                <span>No</span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Background Information Section -->
+                <section class="form-section">
+                    <h2>Background Information</h2>
+                    
+                    <div class="form-group">
+                        <label>Have you ever been convicted before <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="convicted" value="Yes" required>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="convicted" value="No" required>
+                                <span>No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Have you ever broken a lease <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="brokenLease" value="Yes" required>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="brokenLease" value="No" required>
+                                <span>No</span>
+                            </label>
+                        </div>
+                        <textarea id="brokenLeaseDesc" name="brokenLeaseDesc" rows="2" placeholder="If Yes, provide explanation" class="conditional-field" style="display: none;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Have you ever declared bankruptcy <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="bankruptcy" value="Yes" required>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="bankruptcy" value="No" required>
+                                <span>No</span>
+                            </label>
+                        </div>
+                        <textarea id="bankruptcyDesc" name="bankruptcyDesc" rows="2" placeholder="If yes, provide explanation" class="conditional-field" style="display: none;"></textarea>
+                    </div>
+                </section>
+
+                <!-- Previous Landlord Information Section -->
+                <section class="form-section">
+                    <h2>Previous Landlord Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="previousLandlordName">Previous Landlord / Manager Name</label>
+                        <input type="text" id="previousLandlordName" name="previousLandlordName" placeholder="Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="previousLandlordNumber">Previous Landlord / Manager Number</label>
+                        <input type="tel" id="previousLandlordNumber" name="previousLandlordNumber" placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentLandlordAddress">Current Landlord / Manager Address</label>
+                        <textarea id="currentLandlordAddress" name="currentLandlordAddress" rows="3" placeholder="Street address, City, State, ZIP"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monthlyPayment">Monthly Payment / Rental Amount <span class="required">*</span></label>
+                        <input type="number" id="monthlyPayment" name="monthlyPayment" placeholder="0.00" step="0.01" required>
+                    </div>
+                </section>
+
+                <!-- Employment Information Section -->
+                <section class="form-section">
+                    <h2>Employment Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="grossIncome">Gross Income <span class="required">*</span></label>
+                        <input type="number" id="grossIncome" name="grossIncome" placeholder="0.00" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Are you currently employed <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="employed" value="Yes" required>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="employed" value="No" required>
+                                <span>No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="employmentLength">Length of employment <span class="required">*</span></label>
+                        <input type="text" id="employmentLength" name="employmentLength" placeholder="e.g., 2 years, 6 months" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monthlySalary">Monthly Salary (USD) <span class="required">*</span></label>
+                        <input type="number" id="monthlySalary" name="monthlySalary" placeholder="0.00" step="0.01" required>
+                    </div>
+                </section>
+
+                <!-- Rental Details Section -->
+                <section class="form-section">
+                    <h2>Rental Details</h2>
+                    
+                    <div class="form-group">
+                        <label for="moveInDate">Move in Date <span class="required">*</span></label>
+                        <input type="date" id="moveInDate" name="moveInDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="moveOutDate">Move out date <span class="required">*</span></label>
+                        <input type="date" id="moveOutDate" name="moveOutDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reasonForLeaving">Reason for Leaving Current Address <span class="required">*</span></label>
+                        <textarea id="reasonForLeaving" name="reasonForLeaving" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numberOfPeople">How many people will be staying in the apartment, including yourself <span class="required">*</span></label>
+                        <input type="number" id="numberOfPeople" name="numberOfPeople" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startStaying">When would you like to start staying <span class="required">*</span></label>
+                        <input type="text" id="startStaying" name="startStaying" placeholder="e.g., Immediately, Next month" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="creditScore">Credit score</label>
+                        <input type="number" id="creditScore" name="creditScore" placeholder="e.g., 750" min="300" max="850">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keysTimeline">How soon do you intend to receive the keys/documents of the property <span class="required">*</span></label>
+                        <input type="text" id="keysTimeline" name="keysTimeline" placeholder="e.g., Within 1 week" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="depositTimeline">How soon do you intend to pay security deposit <span class="required">*</span></label>
+                        <input type="text" id="depositTimeline" name="depositTimeline" placeholder="e.g., Immediately, Within 3 days" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rentTimeline">How soon do you intend to pay rent <span class="required">*</span></label>
+                        <input type="text" id="rentTimeline" name="rentTimeline" placeholder="e.g., On move-in date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method ($60 to be paid through Zelle, Apple Pay, PayPal, Chime, Google Pay, Venmo, or Cash App, which is refundable) <span class="required">*</span></label>
+                        <select id="paymentMethod" name="paymentMethod" required>
+                            <option value="">Choose payment method</option>
+                            <option value="Cash app">Cash app</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="Chime">Chime</option>
+                            <option value="Apple Pay">Apple Pay</option>
+                            <option value="Zelle">Zelle</option>
+                            <option value="Google Pay">Google Pay</option>
+                            <option value="Venmo">Venmo</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Certification Section -->
+                <section class="form-section">
+                    <h2>Certification & Signature</h2>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="certification" name="certification" required>
+                            <span>I hereby certify that I am at least 18 years of age. Applicant represents that all information given on this application is true and correct. Applicant hereby authorizes verification of all references and facts. Applicant hereby authorizes owner/agent to obtain any and all Unlawful Detainer, Credit Reports, Telechecks, and/or Criminal Background Reports. Applicant agrees to furnish additional credit and/or personal references upon request. Applicant understands that incomplete or incorrect information provided in the application may cause a delay in processing which may result in denial of tenancy. Applicant hereby waives any claim and releases from liability any person providing or obtaining said verification or additional information. <span class="required">*</span></span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateSigning">Date of Signing <span class="required">*</span></label>
+                        <input type="date" id="dateSigning" name="dateSigning" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signature">Signature by name <span class="required">*</span></label>
+                        <input type="text" id="signature" name="signature" placeholder="Your full name" required>
+                    </div>
+                </section>
+
+                <!-- Submit Button -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <span class="btn-text">Submit Application</span>
+                        <span class="btn-loader" style="display: none;">Sending...</span>
+                    </button>
+                    <button type="reset" class="btn-reset">Clear Form</button>
+                </div>
+
+                <!-- Success/Error Messages -->
+                <div id="message" class="message" style="display: none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
