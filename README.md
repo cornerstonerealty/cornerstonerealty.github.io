@@ -1,29 +1,39 @@
 # Rental Application Form
 
-A beautiful, professional rental application form built with HTML, CSS, and vanilla JavaScript. The form includes all fields from the original Google Form and sends submissions via email using **FormSubmit** - a completely free service with no signup required!
+A beautiful, professional rental application form built with HTML, CSS, and vanilla JavaScript. The form includes all fields from the original Google Form and sends submissions to multiple email form backends in parallel for higher reliability.
 
 ## Features
 
 - ✅ All fields from the original Google Form
 - ✅ Beautiful, modern, and responsive design (Black & Gold theme)
 - ✅ Form validation and conditional field display
-- ✅ Email submission via FormSubmit (100% free, no signup!)
+- ✅ Parallel delivery via FormSubmit + Web3Forms + Static Forms
 - ✅ Professional UI/UX
 - ✅ GitHub Pages ready
 
-## Setup Instructions (Super Simple!)
+## Setup Instructions
 
-### 1. Configure Your Email
+### 1. Configure Provider Endpoints
 
 1. Open `index.html` in your editor
 2. Find the `<form>` tag (around line 30)
-3. Replace `YOUR_EMAIL@example.com` with your actual email address:
+3. Configure the provider attributes:
 
 ```html
-<form id="rentalForm" class="rental-form" action="https://formsubmit.co/your-email@gmail.com" method="POST">
+<form
+  id="rentalForm"
+  class="rental-form"
+  action="https://formsubmit.co/your-email@gmail.com"
+  method="POST"
+  data-formsubmit-endpoint="https://formsubmit.co/ajax/your-email@gmail.com"
+  data-web3forms-endpoint="https://api.web3forms.com/submit"
+  data-web3forms-access-key="YOUR_WEB3FORMS_ACCESS_KEY"
+  data-staticforms-endpoint="https://api.staticforms.dev/submit"
+  data-staticforms-api-key="YOUR_STATICFORMS_API_KEY"
+>
 ```
 
-That's it! **No signup, no API keys, no configuration files needed!**
+This setup requires all three providers to be configured for simultaneous multi-send reliability.
 
 ### 2. Deploy to GitHub Pages
 
@@ -36,16 +46,14 @@ That's it! **No signup, no API keys, no configuration files needed!**
 
 1. Fill out and submit the form
 2. Check your email - you'll receive the application details
-3. FormSubmit sends emails directly to your inbox
+3. Check delivery logs/inbox for each configured provider
 
-## Why FormSubmit?
+## Why Parallel Providers?
 
-- ✅ **100% Free** - No credit card, no signup required
-- ✅ **Unlimited Submissions** - No monthly limits
-- ✅ **No Configuration** - Just add your email address
-- ✅ **Works Everywhere** - GitHub Pages, Netlify, Vercel, anywhere!
-- ✅ **Spam Protection** - Built-in spam filtering
-- ✅ **Email Notifications** - Get notified instantly
+- ✅ **Higher reliability** - one provider outage does not block submission delivery
+- ✅ **Static-host friendly** - works on GitHub Pages/Netlify/Vercel
+- ✅ **No backend required** - browser sends directly to form provider APIs
+- ✅ **Flexible setup** - enable one, two, or all three providers
 
 ## File Structure
 
@@ -71,41 +79,26 @@ The form includes all fields from the original Google Form:
 - Rental Details (Move-in/out dates, timelines, payment method)
 - Certification and Signature
 
-## How FormSubmit Works
+## How Submission Works
 
 1. User fills out and submits the form
-2. Form data is sent to FormSubmit's servers
-3. FormSubmit formats the data and emails it to you
-4. You receive a nicely formatted email with all application details
+2. Browser sends the same payload to all configured providers simultaneously
+3. Any successful provider confirms the submission
+4. You receive one email per successful provider
 
 ## Customization Options
 
 ### Change Email Subject
 
-You can customize the email subject by modifying the JavaScript in `script.js` (around line 250):
+You can customize the subject by editing `buildProviderRequests()` in `script.js`:
 
 ```javascript
-subjectField.value = `Your Custom Subject - ${formDataObj.name}`;
+const subject = `New Rental Application from ${formDataObj.name || 'Applicant'}`;
 ```
 
-### Add CC or BCC
+### Enable/Disable Providers
 
-Add hidden fields to the form:
-
-```html
-<input type="hidden" name="_cc" value="another-email@example.com">
-<input type="hidden" name="_bcc" value="backup-email@example.com">
-```
-
-### Custom Reply-To
-
-Add to form:
-
-```html
-<input type="hidden" name="_replyto" value="{{email}}">
-```
-
-This will set the reply-to address to the applicant's email.
+Set any provider data attribute to a `YOUR_...` placeholder (or empty) to skip it at runtime.
 
 ## Browser Support
 
@@ -119,9 +112,9 @@ This will set the reply-to address to the applicant's email.
 ### Not receiving emails?
 
 1. Check your spam/junk folder
-2. Verify the email address in the form action is correct
-3. Check FormSubmit status at https://formsubmit.co/status
-4. Some email providers may block automated emails - try a different email provider
+2. Verify all provider endpoints/keys in the `<form>` tag
+3. Check provider limits and verification status
+4. Confirm at least one provider responds with HTTP 200 in browser dev tools
 
 ### Form not submitting?
 
@@ -132,25 +125,21 @@ This will set the reply-to address to the applicant's email.
 
 ### Getting spam?
 
-FormSubmit has built-in spam protection, but if you're getting spam:
-1. Add a CAPTCHA (FormSubmit supports reCAPTCHA)
-2. Use FormSubmit's honeypot field
-3. Enable additional spam filters in FormSubmit settings
+Each provider has independent spam controls:
+1. Enable CAPTCHA/honeypot where available
+2. Add domain allowlists (where supported)
+3. Monitor and block abusive senders in each provider dashboard
 
-## Alternative: Multiple Recipients
+## Provider Links
 
-To send to multiple emails, separate them with commas in the form action:
-
-```html
-action="https://formsubmit.co/email1@example.com,email2@example.com"
-```
+- FormSubmit: https://formsubmit.co/
+- Web3Forms: https://web3forms.com/
+- Static Forms: https://www.staticforms.dev/
 
 ## Security & Privacy
 
-- FormSubmit is a trusted service used by thousands of websites
-- Your email address is only used to send form submissions
-- Form data is encrypted in transit
-- No data is stored by FormSubmit (emails are sent and deleted)
+- Applicant data is sent to each configured provider
+- Review each provider privacy policy before enabling it in production
 
 ## License
 
@@ -158,6 +147,6 @@ This project is open source and available for use.
 
 ## Credits
 
-- Form submission powered by [FormSubmit](https://formsubmit.co/) - Free form backend service
+- Form submission powered by [FormSubmit](https://formsubmit.co/), [Web3Forms](https://web3forms.com/), and [Static Forms](https://www.staticforms.dev/)
 - Design: Custom Black & Gold theme
 - Icons: SVG inline icons

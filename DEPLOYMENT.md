@@ -1,26 +1,34 @@
 # Deployment Guide for GitHub Pages
 
 This form is designed to work on static hosting services like GitHub Pages. **No server-side code needed!**
+It now sends submissions to multiple providers in parallel for better delivery reliability.
 
 ## Quick Start for GitHub Pages
 
-1. **Update your email** in `index.html` (line 30):
+1. **Configure provider endpoints** in `index.html` on the `<form>` tag:
    ```html
-   <form action="https://formsubmit.co/your-email@gmail.com" method="POST">
+   <form
+     action="https://formsubmit.co/your-email@gmail.com"
+     data-formsubmit-endpoint="https://formsubmit.co/ajax/your-email@gmail.com"
+     data-web3forms-endpoint="https://api.web3forms.com/submit"
+     data-web3forms-access-key="YOUR_WEB3FORMS_ACCESS_KEY"
+     data-staticforms-endpoint="https://api.staticforms.dev/submit"
+     data-staticforms-api-key="YOUR_STATICFORMS_API_KEY"
+   >
    ```
 
 2. **Push to GitHub**
 
 3. **Enable GitHub Pages** in repository settings
 
-That's it! The form will work immediately.
+This setup requires all 3 providers to be configured and sends to all 3 simultaneously.
 
-## Why FormSubmit?
+## Provider Strategy
 
-✅ **Completely Free** - No signup, no credit card, no limits  
-✅ **No Configuration** - Just add your email address  
-✅ **Works Everywhere** - Any static hosting service  
-✅ **Instant Setup** - 30 seconds to configure  
+✅ **FormSubmit** - Easiest setup, no signup required  
+✅ **Web3Forms** - Free tier with higher monthly allowance  
+✅ **Static Forms** - Reliable API endpoint with free plan  
+✅ **Parallel Send** - Browser sends to all configured providers at the same time
 
 ## Files Needed
 
@@ -35,15 +43,11 @@ That's it! The form will work immediately.
 - `composer.json` (not needed for static hosting)
 - `config.js` (not needed - email is in HTML)
 
-## FormSubmit vs Other Services
+## Provider Notes
 
-| Feature | FormSubmit | EmailJS | PHP |
-|---------|-----------|---------|-----|
-| **Cost** | Free | Free (200/month) | Free |
-| **Signup Required** | ❌ No | ✅ Yes | N/A |
-| **Configuration** | 1 line | Multiple steps | Server setup |
-| **GitHub Pages** | ✅ Works | ✅ Works | ❌ No |
-| **Setup Time** | 30 seconds | 5-10 minutes | 30+ minutes |
+- `FormSubmit`: Use `https://formsubmit.co/ajax/your-email@gmail.com` for AJAX requests.
+- `Web3Forms`: Create an access key, then set `data-web3forms-access-key`.
+- `Static Forms`: Use `https://api.staticforms.dev/submit` and set your `apiKey` from Static Forms dashboard.
 
 ## Deployment Steps
 
@@ -86,17 +90,16 @@ After deployment:
 
 **Not receiving emails?**
 - Check spam folder
-- Verify email address in form action
-- Try a different email provider (Gmail works best)
+- Verify all configured endpoints and keys are valid
+- Confirm you submitted each provider's initial verification step (if required)
+- Check each provider dashboard/limit status
 
 **Form not working?**
 - Check browser console for errors
 - Verify form action URL is correct
-- Ensure FormSubmit service is accessible
+- Ensure outbound requests to provider APIs are not blocked by browser extensions/network policy
 
 ## Security Notes
 
-- FormSubmit is a trusted service
-- Your email is only used for delivery
-- No sensitive data is stored
-- All submissions are encrypted in transit
+- You are posting applicant data to every configured provider
+- Only enable providers you trust and review each provider privacy policy

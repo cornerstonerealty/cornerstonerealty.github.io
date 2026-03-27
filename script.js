@@ -4,10 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
     const messageDiv = document.getElementById('message');
 
-    // FormSubmit Configuration
-    // Replace 'YOUR_EMAIL@example.com' in the form action with your email address
-    // FormSubmit is completely free, no signup required!
-    // Visit: https://formsubmit.co/
+    // Multi-provider configuration: all configured providers are called in parallel.
 
     // Check if form was just submitted (from redirect)
     const urlParams = new URLSearchParams(window.location.search);
@@ -218,6 +215,89 @@ document.addEventListener('DOMContentLoaded', function() {
         return formatted;
     }
 
+    function isPlaceholder(value) {
+        return !value || value.includes('YOUR_');
+    }
+
+    function buildProviderRequests(formDataObj) {
+        const subject = `New Rental Application from ${formDataObj.name || 'Applicant'}`;
+        const formsubmitEndpoint = form.getAttribute('data-formsubmit-endpoint') || form.getAttribute('action') || '';
+        const web3formsEndpoint = form.getAttribute('data-web3forms-endpoint') || 'https://api.web3forms.com/submit';
+        const web3formsAccessKey = form.getAttribute('data-web3forms-access-key') || '';
+        const staticFormsEndpoint = form.getAttribute('data-staticforms-endpoint') || 'https://api.staticforms.dev/submit';
+        const staticFormsApiKey = form.getAttribute('data-staticforms-api-key') || '';
+
+        const commonPayload = {
+            ...formDataObj,
+            _subject: subject,
+            subject
+        };
+
+        const providers = [];
+        const missingProviders = [];
+
+        if (!isPlaceholder(formsubmitEndpoint)) {
+            providers.push({
+                name: 'FormSubmit',
+                send: () => fetch(formsubmitEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...commonPayload,
+                        _captcha: 'false',
+                        _template: 'table'
+                    })
+                })
+            });
+        } else {
+            missingProviders.push('FormSubmit');
+        }
+
+        if (!isPlaceholder(web3formsEndpoint) && !isPlaceholder(web3formsAccessKey)) {
+            providers.push({
+                name: 'Web3Forms',
+                send: () => fetch(web3formsEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...commonPayload,
+                        access_key: web3formsAccessKey
+                    })
+                })
+            });
+        } else {
+            missingProviders.push('Web3Forms');
+        }
+
+        if (!isPlaceholder(staticFormsEndpoint) && !isPlaceholder(staticFormsApiKey)) {
+            providers.push({
+                name: 'StaticForms',
+                send: () => fetch(staticFormsEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...commonPayload,
+                        apiKey: staticFormsApiKey,
+                        replyTo: formDataObj.email || ''
+                    })
+                })
+            });
+        } else {
+            missingProviders.push('StaticForms');
+        }
+
+        return { providers, missingProviders };
+    }
+
     // Handle form submission
     const handleSubmit = async function(e) {
         e.preventDefault();
@@ -236,80 +316,69 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
         const formDataObj = Object.fromEntries(formData);
         
-        // Format data for email body
+        // Format data for email body and build provider requests
         const emailBody = formatFormData(formData);
+        formDataObj.emailBody = emailBody;
+        const { providers, missingProviders } = buildProviderRequests(formDataObj);
 
-        // Check if email is configured in form action
-        const formAction = form.getAttribute('action');
-        if (!formAction || formAction.includes('YOUR_EMAIL@example.com')) {
-            showMessage('Please configure your email address in the form action attribute.', 'error');
+        if (missingProviders.length > 0) {
+            showMessage(`Please configure all providers: ${missingProviders.join(', ')}.`, 'error');
             submitBtn.disabled = false;
             submitBtn.classList.remove('loading');
             return;
         }
 
-        // Add hidden fields for FormSubmit
-        // Remove existing hidden fields if any
-        const existingHidden = form.querySelectorAll('input[type="hidden"]');
-        existingHidden.forEach(field => {
-            if (field.name === '_subject' || field.name === '_template' || field.name === '_captcha' || field.name === '_next') {
-                field.remove();
-            }
-        });
-
-        // Add subject
-        const subjectField = document.createElement('input');
-        subjectField.type = 'hidden';
-        subjectField.name = '_subject';
-        subjectField.value = `New Rental Application from ${formDataObj.name || 'Applicant'}`;
-        form.appendChild(subjectField);
-
-        // Add template (optional - for custom formatting)
-        const templateField = document.createElement('input');
-        templateField.type = 'hidden';
-        templateField.name = '_template';
-        templateField.value = 'table';
-        form.appendChild(templateField);
-
-        // Submit to FormSubmit using fetch (AJAX)
+        // Submit to all providers simultaneously
         try {
-            // Add _next field to redirect back to same page (optional - for better UX)
-            const nextField = document.createElement('input');
-            nextField.type = 'hidden';
-            nextField.name = '_next';
-            nextField.value = window.location.href + '?submitted=success';
-            form.appendChild(nextField);
+            const settled = await Promise.allSettled(
+                providers.map(async (provider) => {
+                    const response = await provider.send();
+                    if (!response.ok) {
+                        throw new Error(`${provider.name} returned ${response.status}`);
+                    }
 
-            // Create FormData with all fields
-            const submitData = new FormData(form);
-            
-            // Send to FormSubmit
-            const response = await fetch(formAction, {
-                method: 'POST',
-                body: submitData,
-                redirect: 'follow'
-            });
+                    const contentType = response.headers.get('content-type') || '';
+                    if (contentType.includes('application/json')) {
+                        const payload = await response.clone().json().catch(() => null);
+                        if (payload && payload.success === false) {
+                            throw new Error(`${provider.name} rejected the submission`);
+                        }
+                        if (payload && payload.success === 'false') {
+                            throw new Error(`${provider.name} rejected the submission`);
+                        }
+                        if (payload && payload.status === 'error') {
+                            throw new Error(`${provider.name} returned an error response`);
+                        }
+                    }
 
-            // FormSubmit returns a success response if submission works
-            if (response.ok || response.redirected) {
-                showMessage('Application submitted successfully! We will contact you soon.', 'success');
+                    return provider.name;
+                })
+            );
+
+            const successfulProviders = settled
+                .map((result, index) => (result.status === 'fulfilled' ? providers[index].name : null))
+                .filter(Boolean);
+            const failedProviders = settled
+                .map((result, index) => (result.status === 'rejected' ? providers[index].name : null))
+                .filter(Boolean);
+
+            if (successfulProviders.length > 0) {
+                if (failedProviders.length > 0) {
+                    showMessage(`Sent via ${successfulProviders.join(', ')}. Failed: ${failedProviders.join(', ')}.`, 'success');
+                } else {
+                    showMessage('Application submitted successfully! We will contact you soon.', 'success');
+                }
+
                 form.reset();
-                
-                // Hide all conditional fields
                 document.querySelectorAll('.conditional-field').forEach(field => {
                     field.style.display = 'none';
                 });
-                
-                // Remove success parameter from URL if present
-                if (window.location.search.includes('submitted=success')) {
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
             } else {
-                throw new Error('Submission failed');
+                throw new Error('All providers failed');
             }
         } catch (error) {
-            console.error('FormSubmit Error:', error);
-            showMessage('Failed to submit. Please try again or refresh the page.', 'error');
+            console.error('Email delivery error:', error);
+            showMessage('Failed to submit through all configured providers. Please try again.', 'error');
         } finally {
             // Re-enable submit button
             submitBtn.disabled = false;
@@ -337,4 +406,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
